@@ -18,4 +18,8 @@
       <ProjectReference Include="..\AddinManagerContractTests\AddinManagerContractTests.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="JKang.IpcServiceFramework.Hosting.NamedPipe" Version="3.0.4" />
+    </ItemGroup>
+
 </Project>
