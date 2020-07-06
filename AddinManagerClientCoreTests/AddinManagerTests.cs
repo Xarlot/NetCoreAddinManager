@@ -6,7 +6,6 @@ namespace AddinManagerClientCoreTests {
     public class AddinManagerTests {
         [Test]
         public void FirstTest() {
-            var addinManager = new AddinManager.AddinManager();
         }
     }
 }

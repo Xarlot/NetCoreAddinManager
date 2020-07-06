@@ -1,6 +1,9 @@
 ﻿using System;
 
 namespace AddinManager {
-    public class AddinManager {
+    public class AddinFactory : IAddinFactory {
+    }
+
+    public interface IAddinFactory {
     }
 }

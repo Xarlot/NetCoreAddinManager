@@ -16,6 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AddinManager.Core\AddinManager.Core.csproj" />
       <ProjectReference Include="..\AddinManagerHostCoreTests\AddinManagerHostCoreTests.csproj" />
     </ItemGroup>
 

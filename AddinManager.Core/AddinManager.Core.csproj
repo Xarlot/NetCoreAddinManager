@@ -13,12 +13,4 @@
       <OutputPath>..\bin\Release\</OutputPath>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="JKang.IpcServiceFramework.Server" Version="2.3.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\AddinManager.Core\AddinManager.Core.csproj" />
-    </ItemGroup>
-
 </Project>
