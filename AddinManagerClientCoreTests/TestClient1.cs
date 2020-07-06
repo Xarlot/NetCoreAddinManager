@@ -1,5 +1,7 @@
 using System.IO.Pipes;
 using System.Threading.Tasks;
+using AddinManager;
+using AddinManager.Core;
 using AddinManagerContractTests;
 using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +12,9 @@ namespace AddinManagerClientCoreTests {
     public class TestClient1 {
         [Test]
         public async Task Test() {
+            using var addinProcess = new AddinProcess(ProcessType.NetCore3, new AddinHostBootstrapperOptions());
             ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeIpcClient<ITestContract1>("client1", pipeName: "pipeinternal").BuildServiceProvider();
+            
             IIpcClientFactory<ITestContract1> clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<ITestContract1>>();
             IIpcClient<ITestContract1> client = clientFactory.CreateClient("client1");
             bool output = await client.InvokeAsync(x => x.DoTest());
