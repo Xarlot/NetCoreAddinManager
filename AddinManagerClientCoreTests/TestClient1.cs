@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using AddinManager;
-using AddinManagerContractTests;
+using AddinManager.Core;
 using FluentAssertions;
 using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,11 +11,11 @@ namespace AddinManagerClientCoreTests {
     public class TestClient1 {
         [Test]
         public async Task Test() {
-            ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeAddinClient<ITestContract1>("client1", runtime: FrameworkVersionHelper.GetVersion()).BuildServiceProvider();
+            ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("client1", runtime: FrameworkVersionHelper.GetVersion()).BuildServiceProvider();
             
-            IIpcClientFactory<ITestContract1> clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<ITestContract1>>();
-            IIpcClient<ITestContract1> client = clientFactory.CreateClient("client1");
-            var output = await client.InvokeAsync(x => x.DoTest());
+            var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
+            var client = clientFactory.CreateClient("client1");
+            var output = await client.InvokeAsync(x => x.ToTest());
             output.Should().BeTrue();
         }
     }

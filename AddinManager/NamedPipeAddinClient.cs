@@ -14,8 +14,8 @@ namespace AddinManager {
         public NamedPipeAddinClient(string name, NamedPipeAddinClientOptions options) : base(name, options) {
             this.options = options;
             this.addinProcess = new AddinProcess(options.Runtime);
-            this.pipeName = this.addinProcess.Guid.ToString();
             this.addinProcess.Start();
+            this.pipeName = this.addinProcess.Guid.ToString();
         }
         protected override async Task<Stream> ConnectToServerAsync(CancellationToken cancellationToken) {
             NamedPipeClientStream stream = new NamedPipeClientStream(".", this.pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
