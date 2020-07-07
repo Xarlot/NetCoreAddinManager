@@ -1,7 +1,5 @@
-using System.IO.Pipes;
 using System.Threading.Tasks;
 using AddinManager;
-using AddinManager.Core;
 using AddinManagerContractTests;
 using FluentAssertions;
 using JKang.IpcServiceFramework.Client;
@@ -13,7 +11,7 @@ namespace AddinManagerClientCoreTests {
     public class TestClient1 {
         [Test]
         public async Task Test() {
-            using var addinProcess = new AddinProcess(Runtime.NetCore3);
+            using var addinProcess = new AddinProcess(FrameworkVersionHelper.GetVersion());
             addinProcess.Start();
             ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeIpcClient<ITestContract1>("client1", pipeName: "pipeinternal").BuildServiceProvider();
             

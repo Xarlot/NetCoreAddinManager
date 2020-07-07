@@ -7,8 +7,9 @@ using System.Threading;
 namespace AddinManager {
     public class AddinProcess : IDisposable {
         readonly object processLocker = new object();
-        const string HostCorePath = "AddinHost";
-        const string HostFwPath = "AddinHostFW";
+        const string HostCoreFolder = "AddinHost";
+        const string HostCoreExe = "AddinHostCore.exe";
+        const string HostFwExe = "AddinHostFW.exe";
         readonly string pathToAddinProcess;
         Guid guid;
         Process process;
@@ -43,7 +44,9 @@ namespace AddinManager {
 
         }
         string GetProcessName(Runtime runtime) {
-            return runtime == Runtime.NetCore3 ? Path.Combine(HostCorePath, $"{HostCorePath}.exe") : Path.Combine(HostFwPath, $"{HostFwPath}.exe");
+            return runtime == Runtime.NetCore3 
+                ? Path.Combine(HostCoreFolder, "netcoreapp3.1", HostCoreExe) : 
+                Path.Combine(HostCoreFolder, "net48", HostFwExe);
         }
 
         public void Start() {
