@@ -3,12 +3,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using AddinManager.Core;
 
 namespace AddinManager {
     public class AddinProcess : IDisposable {
         readonly object processLocker = new object();
-        const string HostCorePath = "AddinHostCore";
+        const string HostCorePath = "AddinHost";
         const string HostFwPath = "AddinHostFW";
         readonly string pathToAddinProcess;
         Guid guid;

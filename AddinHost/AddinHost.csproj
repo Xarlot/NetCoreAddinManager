@@ -2,17 +2,16 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-        <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
+        <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>..\bin\Debug\AddinHostCore</OutputPath>
+      <OutputPath>..\bin\Debug\AddinHost\</OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>..\bin\Release\</OutputPath>
+      <OutputPath>..\bin\Release\AddinHost\</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
