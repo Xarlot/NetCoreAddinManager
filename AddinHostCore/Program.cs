@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -20,7 +21,8 @@ namespace AddinHostCore {
             int pid = Convert.ToInt32(args[1].Remove(0, 5), CultureInfo.InvariantCulture);
             try {
                 Process process = Process.GetProcessById(pid);
-                process.Exited += (sender, eventArgs) => { Environment.Exit(0); };
+                Thread thread = new Thread(ListenProcessExit) {IsBackground = true};
+                thread.Start(process);
                 EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "AddinProcess:" + guid);
                 eventWaitHandle.Set();
                 eventWaitHandle.Close();
@@ -28,14 +30,19 @@ namespace AddinHostCore {
             catch {
                 return 1;
             }
+
             CreateHostBuilder(args).Build().Run();
             return 0;
         }
+        static void ListenProcessExit(object parameter) {
+            var process = (Process)parameter;
+            process.WaitForExit();
+            Environment.Exit(0);
+        }
+
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureServices(services => { services.AddScoped<ITestContract1, Test1>(); })
-                .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<ITestContract1>("pipeinternal"); })
-                .ConfigureLogging(builder => { builder.SetMinimumLevel(LogLevel.Debug); });
+            Host.CreateDefaultBuilder(args).ConfigureServices(services => { services.AddScoped<ITestContract1, Test1>(); })
+                .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<ITestContract1>("pipeinternal"); }).ConfigureLogging(builder => { builder.SetMinimumLevel(LogLevel.Debug); });
     }
 }

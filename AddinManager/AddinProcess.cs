@@ -2,13 +2,11 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using AddinManager.Core;
 
 namespace AddinManager {
     public class AddinProcess : IDisposable {
-        readonly AddinHostBootstrapperOptions options;
         readonly object processLocker = new object();
         const string HostCorePath = "AddinHostCore";
         const string HostFwPath = "AddinHostFW";
@@ -18,6 +16,8 @@ namespace AddinManager {
 
         TimeSpan startupTimeout = new TimeSpan(0, 0, 100);
 
+        protected Process Process => this.process;
+        public int ParentProcessId { get; }
         public TimeSpan StartupTimeout {
             get => this.startupTimeout;
             set {
@@ -32,13 +32,16 @@ namespace AddinManager {
             }
         }
 
-        public AddinProcess(Runtime runtime, AddinHostBootstrapperOptions options) {
-            this.options = options;
-            String folder = Path.GetDirectoryName(typeof(AddinProcess).Assembly.Location);
-            String exeName = GetProcessName(runtime);
+        protected internal AddinProcess(Runtime runtime, int parentProcessId) {
+            ParentProcessId = parentProcessId;
+            string folder = Path.GetDirectoryName(typeof(AddinProcess).Assembly.Location);
+            string exeName = GetProcessName(runtime);
             this.pathToAddinProcess = Path.Combine(folder, exeName);
             if (!File.Exists(this.pathToAddinProcess))
                 throw new InvalidOperationException(@$"Addin executable not found: {pathToAddinProcess}");
+        }
+        public AddinProcess(Runtime runtime) : this(runtime, Process.GetCurrentProcess().Id) {
+
         }
         string GetProcessName(Runtime runtime) {
             return runtime == Runtime.NetCore3 ? Path.Combine(HostCorePath, $"{HostCorePath}.exe") : Path.Combine(HostFwPath, $"{HostFwPath}.exe");
@@ -54,7 +57,7 @@ namespace AddinManager {
         Process CreateProcess() {
             Process addinProcess = new Process();
             Guid guid = Guid.NewGuid();
-            string args = string.Format(CultureInfo.InvariantCulture, "/guid:{0} /pid:{1}", guid, Process.GetCurrentProcess().Id);
+            string args = string.Format(CultureInfo.InvariantCulture, "/guid:{0} /pid:{1}", guid, ParentProcessId);
 
             addinProcess.StartInfo.CreateNoWindow = true;
             addinProcess.StartInfo.UseShellExecute = false;
