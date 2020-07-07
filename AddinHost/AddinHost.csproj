@@ -1,17 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>..\bin\Debug\AddinHost\</OutputPath>
+    <PropertyGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
+        <AssemblyName>AddinHostCore</AssemblyName>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(TargetFramework) == 'net48'">
+        <AssemblyName>AddinHostFW</AssemblyName>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug'">
+      <OutputPath>..\bin\Debug\$(TargetFramework)\AddinHost\</OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>..\bin\Release\AddinHost\</OutputPath>
+        <OutputPath>..\bin\Release\$(TargetFramework)\AddinHost\</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
