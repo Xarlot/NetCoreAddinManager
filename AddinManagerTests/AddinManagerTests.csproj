@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
+        <LangVersion>8</LangVersion>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

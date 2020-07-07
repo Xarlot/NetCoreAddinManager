@@ -9,7 +9,7 @@ namespace AddinManagerTests {
         AddinProcess process;
         [Test]
         public void Test() {
-            process = new AddinProcess(ProcessType.NetCore3, new AddinHostBootstrapperOptions());
+            process = new AddinProcess(Runtime.NetCore3, new AddinHostBootstrapperOptions());
             process.Start().Should().BeTrue();
         }
         [TearDown]

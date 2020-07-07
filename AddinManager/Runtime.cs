@@ -1,6 +1,7 @@
 namespace AddinManager {
-    public enum ProcessType {
+    public enum Runtime {
         Framework,
         NetCore3
     }
+
 }
