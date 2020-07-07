@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading;
 
 namespace AddinManager {
-    public class AddinProcess : IAddinProcess, IDisposable {
+    public class AddinProcess : IAddinProcess {
         readonly object processLocker = new object();
         const string HostCoreFolder = "AddinHost";
         const string HostCoreExe = "AddinHostCore.exe";
@@ -95,7 +95,7 @@ namespace AddinManager {
     }
 
     public interface IAddinProcess : IDisposable {
-        TimeSpan Timeout { get; }
+        TimeSpan StartupTimeout { get; }
         Guid Guid {  get; }
         void Start();
     }

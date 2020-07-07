@@ -4,13 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AddinManager {
     public static class NamedPipeAddinClientExtensions {
-        public static IServiceCollection AddNamedPipeIpcClient<TContract>(this IServiceCollection services, string name, string pipeName) where TContract : class =>
-            services.AddNamedPipeIpcClient<TContract>(name, (Action<IServiceProvider, NamedPipeIpcClientOptions>)((_, options) => options.PipeName = pipeName));
+        public static IServiceCollection AddNamedPipeAddinClient<TContract>(this IServiceCollection services, string name, string pipeName) where TContract : class =>
+            services.AddNamedPipeAddinClient<TContract>(name, (_, options) => options.PipeName = pipeName);
 
-        public static IServiceCollection AddNamedPipeIpcClient<TContract>(this IServiceCollection services, string name, Action<IServiceProvider, NamedPipeIpcClientOptions> configureOptions)
+        public static IServiceCollection AddNamedPipeAddinClient<TContract>(this IServiceCollection services, string name, Action<IServiceProvider, NamedPipeAddinClientOptions> configureOptions)
             where TContract : class {
-            services.AddIpcClient<TContract, NamedPipeIpcClientOptions>(new IpcClientRegistration<TContract, NamedPipeIpcClientOptions>(name,
-                (Func<IServiceProvider, NamedPipeIpcClientOptions, IIpcClient<TContract>>)((_, options) => (IIpcClient<TContract>)new NamedPipeIpcClient<TContract>(name, options)), configureOptions));
+            services.AddAddinClient(new IpcClientRegistration<TContract, NamedPipeAddinClientOptions>(name,
+                (_, options) => (IIpcClient<TContract>)new NamedPipeAddinClient<TContract>(name, options), configureOptions));
             return services;
         }
     }
