@@ -40,8 +40,6 @@ namespace AddinHost {
             process.WaitForExit();
             Environment.Exit(0);
         }
-
-
         public static IHostBuilder CreateHostBuilder(string[] args, string guid) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices(services => { services.AddScoped<IAddinServerContract, IAddinServerContract>(); })

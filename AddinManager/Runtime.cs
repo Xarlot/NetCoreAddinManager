@@ -3,5 +3,4 @@ namespace AddinManager {
         NetCore3,
         Framework
     }
-
 }

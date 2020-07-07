@@ -4,8 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AddinManager {
     public static class NamedPipeAddinClientExtensions {
-        public static IServiceCollection AddNamedPipeAddinClient<TContract>(this IServiceCollection services, string name, string pipeName) where TContract : class =>
-            services.AddNamedPipeAddinClient<TContract>(name, (_, options) => options.PipeName = pipeName);
+        public static IServiceCollection AddNamedPipeAddinClient<TContract>(this IServiceCollection services, string name, Runtime runtime) where TContract : class =>
+            services.AddNamedPipeAddinClient<TContract>(name, (_, options) => {
+                options.Runtime = runtime;
+            });
 
         public static IServiceCollection AddNamedPipeAddinClient<TContract>(this IServiceCollection services, string name, Action<IServiceProvider, NamedPipeAddinClientOptions> configureOptions)
             where TContract : class {
