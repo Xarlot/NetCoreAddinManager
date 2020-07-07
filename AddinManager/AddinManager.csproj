@@ -14,7 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="JKang.IpcServiceFramework.Server" Version="2.3.1" />
+      <PackageReference Include="JKang.IpcServiceFramework.Client" Version="3.0.4" />
     </ItemGroup>
 
     <ItemGroup>

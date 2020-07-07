@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading;
 
 namespace AddinManager {
-    public class AddinProcess : IDisposable {
+    public class AddinProcess : IAddinProcess, IDisposable {
         readonly object processLocker = new object();
         const string HostCoreFolder = "AddinHost";
         const string HostCoreExe = "AddinHostCore.exe";
@@ -18,6 +18,7 @@ namespace AddinManager {
 
         protected Process Process => this.process;
         public int ParentProcessId { get; }
+        public Guid Guid => this.guid;
         public TimeSpan StartupTimeout {
             get => this.startupTimeout;
             set {
@@ -41,7 +42,6 @@ namespace AddinManager {
                 throw new InvalidOperationException(@$"Addin executable not found: {pathToAddinProcess}");
         }
         public AddinProcess(Runtime runtime) : this(runtime, Process.GetCurrentProcess().Id) {
-
         }
         string GetProcessName(Runtime runtime) {
             return runtime == Runtime.NetCore3 
@@ -92,5 +92,11 @@ namespace AddinManager {
         public void Dispose() {
             this.process?.Dispose();
         }
+    }
+
+    public interface IAddinProcess : IDisposable {
+        TimeSpan Timeout { get; }
+        Guid Guid {  get; }
+        void Start();
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using AddinManager.Core;
 using AddinManagerContractTests;
 using AddinManagerCoreTests;
 using JKang.IpcServiceFramework.Hosting;
@@ -31,7 +32,7 @@ namespace AddinHost {
                 return 1;
             }
 
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args, guid).Build().Run();
             return 0;
         }
         static void ListenProcessExit(object parameter) {
@@ -41,10 +42,10 @@ namespace AddinHost {
         }
 
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        public static IHostBuilder CreateHostBuilder(string[] args, string guid) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureServices(services => { services.AddScoped<ITestContract1, Test1>(); })
-                .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<ITestContract1>("pipeinternal"); })
+                .ConfigureServices(services => { services.AddScoped<IAddinServerContract, IAddinServerContract>(); })
+                .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<IAddinServerContract>(guid); })
                 .ConfigureLogging(builder => { builder.SetMinimumLevel(LogLevel.Debug); });
     }
 }
