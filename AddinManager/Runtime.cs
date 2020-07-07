@@ -1,7 +1,7 @@
 namespace AddinManager {
     public enum Runtime {
-        Framework,
-        NetCore3
+        NetCore3,
+        Framework
     }
 
 }
