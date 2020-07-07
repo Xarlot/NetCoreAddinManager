@@ -42,7 +42,9 @@ namespace AddinHostCore {
 
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args).ConfigureServices(services => { services.AddScoped<ITestContract1, Test1>(); })
-                .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<ITestContract1>("pipeinternal"); }).ConfigureLogging(builder => { builder.SetMinimumLevel(LogLevel.Debug); });
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices(services => { services.AddScoped<ITestContract1, Test1>(); })
+                .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<ITestContract1>("pipeinternal"); })
+                .ConfigureLogging(builder => { builder.SetMinimumLevel(LogLevel.Debug); });
     }
 }
