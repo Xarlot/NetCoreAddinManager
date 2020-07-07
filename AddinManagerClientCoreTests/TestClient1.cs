@@ -14,6 +14,7 @@ namespace AddinManagerClientCoreTests {
         [Test]
         public async Task Test() {
             using var addinProcess = new AddinProcess(Runtime.NetCore3, new AddinHostBootstrapperOptions());
+            addinProcess.Start();
             ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeIpcClient<ITestContract1>("client1", pipeName: "pipeinternal").BuildServiceProvider();
             
             IIpcClientFactory<ITestContract1> clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<ITestContract1>>();

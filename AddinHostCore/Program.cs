@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 namespace AddinHostCore {
     class Program {
         public static int Main(string[] args) {
-            Debugger.Launch();
             if (args == null || args.Length != 2 || (!args[0].StartsWith("/guid:", StringComparison.Ordinal) || !args[1].StartsWith("/pid:", StringComparison.Ordinal)))
                 return 1;
             string guid = args[0].Remove(0, 6);

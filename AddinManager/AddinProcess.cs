@@ -16,7 +16,7 @@ namespace AddinManager {
         Guid guid;
         Process process;
 
-        TimeSpan startupTimeout = new TimeSpan(0, 0, 10);
+        TimeSpan startupTimeout = new TimeSpan(0, 0, 100);
 
         public TimeSpan StartupTimeout {
             get => this.startupTimeout;
@@ -44,14 +44,12 @@ namespace AddinManager {
             return runtime == Runtime.NetCore3 ? Path.Combine(HostCorePath, $"{HostCorePath}.exe") : Path.Combine(HostFwPath, $"{HostFwPath}.exe");
         }
 
-        public bool Start() {
+        public void Start() {
             if (this.process == null) {
                 lock (this.processLocker) {
                     this.process ??= CreateProcess();
                 }
             }
-
-            return this.process.Start();
         }
         Process CreateProcess() {
             Process addinProcess = new Process();
