@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,11 @@ namespace AddinManager {
         public static IServiceCollection AddNamedPipeAddinClient<TContract>(this IServiceCollection services, string name, Action<IServiceProvider, NamedPipeAddinClientOptions> configureOptions)
             where TContract : class {
             services.AddAddinClient(new IpcClientRegistration<TContract, NamedPipeAddinClientOptions>(name,
-                (_, options) => (IIpcClient<TContract>)new NamedPipeAddinClient<TContract>(name, options), configureOptions));
+                (serviceProvider, options) => {
+                    var processFactory = serviceProvider.GetRequiredService<IAddinProcessFactory<TContract>>();
+                    var process = processFactory.Create(name);
+                    return (IIpcClient<TContract>)new NamedPipeAddinClient<TContract>(name, process, options);
+                }, configureOptions));
             return services;
         }
     }

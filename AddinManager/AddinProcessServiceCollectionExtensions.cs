@@ -4,17 +4,18 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace AddinManager {
     public static class AddinProcessServiceCollectionExtensions {
-        public static IServiceCollection AddAddinProcess<TAddinProcessOptions>(this IServiceCollection services, AddinProcessRegistration<TAddinProcessOptions> registration, ServiceLifetime lifetime)
+        public static IServiceCollection AddAddinProcess<TContract, TAddinProcessOptions>(this IServiceCollection services, AddinProcessRegistration<TContract, TAddinProcessOptions> registration, ServiceLifetime lifetime)
+            where TContract: class
             where TAddinProcessOptions : AddinProcessOptions {
             switch (lifetime) {
                 case ServiceLifetime.Transient:
-                    services.TryAddTransient<IAddinProcess, AddinProcess>();
+                    services.TryAddTransient<IAddinProcess<TContract>, AddinProcess<TContract>>();
                     break;
                 case ServiceLifetime.Scoped:
-                    services.TryAddScoped<IAddinProcess, AddinProcess>();
+                    services.TryAddScoped<IAddinProcess<TContract>, AddinProcess<TContract>>();
                     break;
                 case ServiceLifetime.Singleton:
-                    services.TryAddSingleton<IAddinProcess, AddinProcess>();
+                    services.TryAddSingleton<IAddinProcess<TContract>, AddinProcess<TContract>>();
                     break;
                 default:
                     throw new Exception("lifetime");

@@ -7,13 +7,13 @@ using JKang.IpcServiceFramework.Client;
 
 namespace AddinManager {
     public class NamedPipeAddinClient<T> : IpcClient<T>, IDisposable where T : class {
-        readonly IAddinProcess addinProcess;
+        readonly IAddinProcess<T> addinProcess;
         readonly NamedPipeAddinClientOptions options;
         readonly string pipeName;
         
-        public NamedPipeAddinClient(string name, NamedPipeAddinClientOptions options) : base(name, options) {
+        public NamedPipeAddinClient(string name, IAddinProcess<T> addinProcess, NamedPipeAddinClientOptions options) : base(name, options) {
             this.options = options;
-            this.addinProcess = new AddinProcess(options.Runtime);
+            this.addinProcess = addinProcess;
             this.addinProcess.Start();
             this.pipeName = this.addinProcess.Guid.ToString();
         }

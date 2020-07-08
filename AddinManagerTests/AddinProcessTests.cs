@@ -6,7 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 
 namespace AddinManagerTests {
-    public class TestAddinProcess : AddinProcess {
+    public class TestAddinProcess<T> : AddinProcess<T> where T: class {
         public int Id => Process.Id;
         protected internal TestAddinProcess(Runtime runtime, int parentProcessId) : base(runtime, parentProcessId) {
         }
@@ -32,13 +32,17 @@ namespace AddinManagerTests {
             testProcess.StartInfo.FileName = "TestHost.exe";
             testProcess.Start();
             
-            using var addinProcess = new TestAddinProcess(Runtime.NetCore3, testProcess.Id);
+            using var addinProcess = new TestAddinProcess<TestContract>(Runtime.NetCore3, testProcess.Id);
             addinProcess.Start();
             
             testProcess.Kill();
             testProcess.WaitForExit();
 
             addinProcess.WaitForExit(5000).Should().BeTrue();
+        }
+
+        interface TestContract {
+            
         }
     }
 }

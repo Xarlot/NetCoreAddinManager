@@ -12,9 +12,9 @@ namespace AddinManagerTests {
         [Test]
         public async Task CreateProcessPerRequestTest() {
             await using ServiceProvider serviceProvider = new ServiceCollection()
-                                                          .AddAddinProcess("perrequest", (provider, options) => { options.Runtime = Runtime.Framework; }, ServiceLifetime.Transient)
-                                                          .AddNamedPipeAddinClient<IAddinServerContract>("perrequest", "perrequest")
-                                                          .BuildServiceProvider();
+                .AddAddinProcess<IAddinServerContract>("perrequest", (provider, options) => { options.Runtime = Runtime.Framework; }, ServiceLifetime.Transient)
+                .AddNamedPipeAddinClient<IAddinServerContract>("perrequest", "perrequest")
+                .BuildServiceProvider();
 
             var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
             var client = clientFactory.CreateClient("client1");

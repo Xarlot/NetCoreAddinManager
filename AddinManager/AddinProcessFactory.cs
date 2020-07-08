@@ -4,16 +4,18 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AddinManager {
-    class AddinProcessFactory<TAddinProcessOptions> : IAddinProcessFactory<TAddinProcessOptions> where TAddinProcessOptions : AddinProcessOptions {
+    class AddinProcessFactory<TContract, TAddinProcessOptions> : IAddinProcessFactory<TContract>  
+        where TContract: class 
+        where TAddinProcessOptions : AddinProcessOptions {
         readonly IServiceProvider serviceProvider;
-        readonly IEnumerable<AddinProcessRegistration<AddinProcessOptions>> registrations;
+        readonly IEnumerable<AddinProcessRegistration<TContract, AddinProcessOptions>> registrations;
 
-        public AddinProcessFactory(IServiceProvider serviceProvider, IEnumerable<AddinProcessRegistration<AddinProcessOptions>> registrations) {
+        public AddinProcessFactory(IServiceProvider serviceProvider, IEnumerable<AddinProcessRegistration<TContract, AddinProcessOptions>> registrations) {
             this.serviceProvider = serviceProvider;
             this.registrations = registrations;
         }
 
-        public IAddinProcess Create(string name) {
+        public IAddinProcess<TContract> Create(string name) {
             var clientRegistration = this.registrations.FirstOrDefault(x => x.Name == name);
             if (clientRegistration == null)
                 throw new ArgumentException("IPC client '" + name + "' is not configured.", nameof(name));
@@ -22,6 +24,8 @@ namespace AddinManager {
         }
     }
 
-    public interface IAddinProcessFactory<T> {
+    public interface IAddinProcessFactory<TContract> 
+        where TContract: class {
+        IAddinProcess<TContract> Create(string name);
     }
 }
