@@ -8,10 +8,10 @@ using NUnit.Framework;
 
 namespace AddinManagerClientCoreTests {
     [TestFixture]
-    public class TestClient1 {
+    public class ConnectionTests {
         [Test]
         public async Task InvokeTest() {
-            ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("client1", runtime: FrameworkVersionHelper.GetVersion()).BuildServiceProvider();
+            await using ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("client1", runtime: FrameworkVersionHelper.GetVersion()).BuildServiceProvider();
             
             var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
             var client = clientFactory.CreateClient("client1");
@@ -20,7 +20,7 @@ namespace AddinManagerClientCoreTests {
         }
         [Test]
         public async Task IncrementTest() {
-            ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("client1", runtime: FrameworkVersionHelper.GetVersion()).BuildServiceProvider();
+            await using ServiceProvider serviceProvider = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("client1", runtime: FrameworkVersionHelper.GetVersion()).BuildServiceProvider();
             
             var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
             var client = clientFactory.CreateClient("client1");

@@ -13,4 +13,8 @@
       <OutputPath>..\bin\Release\</OutputPath>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="JKang.IpcServiceFramework.Client.NamedPipe" Version="3.0.4" />
+    </ItemGroup>
+
 </Project>
