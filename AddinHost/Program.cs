@@ -40,7 +40,7 @@ namespace AddinHost {
         public static IHostBuilder CreateHostBuilder(string[] args, string guid) {
             Console.WriteLine(guid);
             return Host.CreateDefaultBuilder(args)
-                .ConfigureServices(services => { services.AddScoped<IAddinServerContract, AddinServer>(); })
+                .ConfigureServices(services => { services.AddSingleton<IAddinServerContract, AddinServer>(); })
                 .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<IAddinServerContract>(guid); })
                 .ConfigureLogging(builder => { builder.SetMinimumLevel(LogLevel.Debug); });
         }
