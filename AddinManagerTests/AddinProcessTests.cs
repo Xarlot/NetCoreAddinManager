@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace AddinManagerTests {
     public class TestAddinProcess : AddinProcess {
+        public int Id => Process.Id;
         protected internal TestAddinProcess(Runtime runtime, int parentProcessId) : base(runtime, parentProcessId) {
         }
         public TestAddinProcess(Runtime runtime) : base(runtime) {

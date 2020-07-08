@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AddinManager {
+﻿namespace AddinManager {
     public class AddinFactory : IAddinFactory {
     }
 

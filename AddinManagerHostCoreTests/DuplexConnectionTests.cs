@@ -13,8 +13,8 @@ namespace AddinManagerClientCoreTests {
         [Test]
         public async Task RegisterDuplexTest() {
             string pipeName = "duplexHost";
-            var serviceCollection = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("addinServer", runtime: FrameworkVersionHelper.GetVersion())
-                                                           .AddNamedPipeAddinClient<IDuplexClientContract>("duplexClient", FrameworkVersionHelper.GetVersion())
+            var serviceCollection = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("addinServer", "addinServer")
+                                                           .AddNamedPipeAddinClient<IDuplexClientContract>("duplexClient", "addinserver")
                                                            .AddNamedPipeIpcClient<IDuplexHostContract>("duplexHost", pipeName).AddSingleton<IDuplexHostContract, DuplexHost>();
             await using ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 

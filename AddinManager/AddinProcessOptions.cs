@@ -1,7 +1,7 @@
-using JKang.IpcServiceFramework.Client;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AddinManager {
-    public class NamedPipeAddinClientOptions : IpcClientOptions {
+    public class AddinProcessOptions {
         public Runtime Runtime { get; set; }
         public string ProcessName { get; set; }
     }
