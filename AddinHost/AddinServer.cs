@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AddinManager.Core;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,8 +16,10 @@ namespace AddinHost {
             this.count += 1;
             return this.count;
         }
-        public void RegisterDuplex<T>(string name, string pipeName) where T: class {
+        public void RegisterDuplex<T>(string name, string pipeName, string assemblyPath = null) where T: class {
+            Debugger.Launch();
             this.services.AddNamedPipeIpcClient<T>(name, pipeName);
+            this.services.AddPluginClient<T>(name, assemblyPath);
         }
     }
 }
