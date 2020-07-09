@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading;
 
 namespace AddinManager {
-    public class AddinProcess<T> : IAddinProcess<T> where T: class {
+    public class AddinProcess : IAddinProcess {
         readonly object processLocker = new object();
         const string HostCoreFolder = "AddinHost";
         const string HostCoreExe = "AddinHostCore.exe";
@@ -36,7 +36,7 @@ namespace AddinManager {
 
         protected internal AddinProcess(Runtime runtime, int parentProcessId) {
             ParentProcessId = parentProcessId;
-            string folder = Path.GetDirectoryName(typeof(AddinProcess<T>).Assembly.Location);
+            string folder = Path.GetDirectoryName(typeof(AddinProcess).Assembly.Location);
             string exeName = GetProcessName(runtime);
             this.pathToAddinProcess = Path.Combine(folder, exeName);
             if (!File.Exists(this.pathToAddinProcess))
@@ -93,9 +93,6 @@ namespace AddinManager {
         public void Dispose() {
             this.process?.Dispose();
         }
-    }
-
-    public interface IAddinProcess<T> : IAddinProcess where T : class {
     }
 
     public interface IAddinProcess : IDisposable {

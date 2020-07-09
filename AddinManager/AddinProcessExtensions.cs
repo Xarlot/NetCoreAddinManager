@@ -10,11 +10,11 @@ namespace AddinManager {
             where TContract: class {
             services.AddAddinProcess(new AddinProcessRegistration<TContract, AddinProcessOptions>(name, 
                 (serviceProvider, options) => {
-                    IAddinProcess<TContract> CreateHandler(string processName) => new AddinProcess<TContract>(options.Runtime);
+                    IAddinProcess CreateHandler(string processName) => new AddinProcess(options.Runtime);
                     if (options.Lifetime != ServiceLifetime.Singleton) 
                         return CreateHandler(name);
                     var addinProcessPool = serviceProvider.GetRequiredService<IAddinProcessPool>();
-                    return (IAddinProcess<TContract>)addinProcessPool.GetOrAdd(name, CreateHandler);
+                    return addinProcessPool.GetOrAdd(name, CreateHandler);
                 }, configureOptions));
             return services;
         }

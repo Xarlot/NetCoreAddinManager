@@ -12,15 +12,24 @@ namespace AddinManagerClientCoreTests {
     public class DuplexConnectionTests {
         [Test]
         public async Task RegisterDuplexTest() {
-            string pipeName = "duplexHost";
-            var serviceCollection = new ServiceCollection().AddNamedPipeAddinClient<IAddinServerContract>("addinServer", "addinServer")
-                                                           .AddNamedPipeAddinClient<IDuplexClientContract>("duplexClient", "addinserver")
-                                                           .AddNamedPipeIpcClient<IDuplexHostContract>("duplexHost", pipeName).AddSingleton<IDuplexHostContract, DuplexHost>();
+            var serviceCollection = new ServiceCollection()
+                .AddAddinProcess<IAddinServerContract>("duplexHostProcess", (provider, options) => {
+                    options.Runtime = Runtime.Framework;
+                    options.Lifetime = ServiceLifetime.Singleton;
+                })
+                .AddAddinProcess<IDuplexClientContract>("duplexHostProcess", (provider, options) => {
+                    options.Runtime = Runtime.Framework;
+                    options.Lifetime = ServiceLifetime.Singleton;
+                })
+                .AddNamedPipeAddinClient<IAddinServerContract>("addinServer", "duplexHostProcess")
+                .AddNamedPipeAddinClient<IDuplexClientContract>("duplexClient", "duplexHostProcess")
+                .AddNamedPipeEndpoint<IDuplexHostContract>("duplexHost", "duplexHostPipeName")
+                .AddSingleton<IDuplexHostContract, DuplexHost>();
             await using ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
             var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
             var client = clientFactory.CreateClient("addinServer");
-            await client.InvokeAsync(x => x.RegisterDuplex<IDuplexHostContract>("duplexClient", pipeName));
+            await client.InvokeAsync(x => x.RegisterDuplex<IDuplexHostContract>("duplexClient", "duplexHostPipeName"));
 
             var duplexClientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IDuplexClientContract>>();
             var duplexClient = duplexClientFactory.CreateClient("duplexClient");
