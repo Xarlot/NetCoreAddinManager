@@ -8,9 +8,9 @@ namespace AddinManager {
         where TContract: class 
         where TAddinProcessOptions : AddinProcessOptions {
         readonly IServiceProvider serviceProvider;
-        readonly IEnumerable<AddinProcessRegistration<TContract, AddinProcessOptions>> registrations;
+        readonly IEnumerable<AddinProcessRegistration<TContract, TAddinProcessOptions>> registrations;
 
-        public AddinProcessFactory(IServiceProvider serviceProvider, IEnumerable<AddinProcessRegistration<TContract, AddinProcessOptions>> registrations) {
+        public AddinProcessFactory(IServiceProvider serviceProvider, IEnumerable<AddinProcessRegistration<TContract, TAddinProcessOptions>> registrations) {
             this.serviceProvider = serviceProvider;
             this.registrations = registrations;
         }

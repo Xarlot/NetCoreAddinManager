@@ -15,7 +15,7 @@ namespace AddinManager {
             services.AddAddinClient(new IpcClientRegistration<TContract, NamedPipeAddinClientOptions>(name,
                 (serviceProvider, options) => {
                     var processFactory = serviceProvider.GetRequiredService<IAddinProcessFactory<TContract>>();
-                    var process = processFactory.Create(name);
+                    var process = processFactory.Create(options.ProcessName);
                     return (IIpcClient<TContract>)new NamedPipeAddinClient<TContract>(name, process, options);
                 }, configureOptions));
             return services;
