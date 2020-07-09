@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace AddinManager {
     public static class AddinProcessServiceCollectionExtensions {
-        public static IServiceCollection AddAddinProcess<TContract, TAddinProcessOptions>(this IServiceCollection services, AddinProcessRegistration<TContract, TAddinProcessOptions> registration, ServiceLifetime lifetime)
+        public static IServiceCollection AddAddinProcess<TContract, TAddinProcessOptions>(this IServiceCollection services, AddinProcessRegistration<TContract, TAddinProcessOptions> registration)
             where TContract: class
             where TAddinProcessOptions : AddinProcessOptions {
             services.TryAddSingleton<IAddinProcessPool, AddinProcessPool>();
