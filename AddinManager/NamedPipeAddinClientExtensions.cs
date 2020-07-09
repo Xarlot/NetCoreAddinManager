@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +14,7 @@ namespace AddinManager {
             services.AddAddinClient(new IpcClientRegistration<TContract, NamedPipeAddinClientOptions>(name,
                 (serviceProvider, options) => {
                     var processFactory = serviceProvider.GetRequiredService<IAddinProcessFactory<TContract>>();
-                    var process = processFactory.Create(options.ProcessName);
+                    var process = processFactory.Create(options.ProcessName, options.Lifetime);
                     return (IIpcClient<TContract>)new NamedPipeAddinClient<TContract>(name, process, options);
                 }, configureOptions));
             return services;

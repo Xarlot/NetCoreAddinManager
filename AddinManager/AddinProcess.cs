@@ -18,6 +18,7 @@ namespace AddinManager {
 
         protected Process Process => this.process;
         public int ParentProcessId { get; }
+        public int Id => this.process.Id;
         public Guid Guid => this.guid;
         public TimeSpan StartupTimeout {
             get => this.startupTimeout;
@@ -94,7 +95,11 @@ namespace AddinManager {
         }
     }
 
-    public interface IAddinProcess<T> : IDisposable where T: class {
+    public interface IAddinProcess<T> : IAddinProcess where T : class {
+    }
+
+    public interface IAddinProcess : IDisposable {
+        int Id { get; }
         TimeSpan StartupTimeout { get; }
         Guid Guid {  get; }
         void Start();

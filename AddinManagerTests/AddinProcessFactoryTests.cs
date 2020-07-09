@@ -17,9 +17,32 @@ namespace AddinManagerTests {
                 .BuildServiceProvider();
 
             var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
-            var client = clientFactory.CreateClient("perrequest");
+            var client = (NamedPipeAddinClient<IAddinServerContract>)clientFactory.CreateClient("perrequest");
             var output = await client.InvokeAsync(x => x.ToTest());
             output.Should().BeTrue();
+            var client2 = (NamedPipeAddinClient<IAddinServerContract>)clientFactory.CreateClient("perrequest");
+            var output2 = await client2.InvokeAsync(x => x.ToTest());
+            output2.Should().BeTrue();
+            client.ProcessId.Should().NotBeSameAs(client2.ProcessId);
+        }
+        [Test]
+        public async Task CreateSharedProcessTest() {
+            await using ServiceProvider serviceProvider = new ServiceCollection()
+                .AddAddinProcess<IAddinServerContract>("perrequestprocess", (provider, options) => {
+                    options.Runtime = Runtime.Framework;
+                    options.Lifetime = ServiceLifetime.Singleton;
+                }, ServiceLifetime.Singleton)
+                .AddNamedPipeAddinClient<IAddinServerContract>("perrequest", "perrequestprocess")
+                .BuildServiceProvider();
+
+            var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
+            var client = (NamedPipeAddinClient<IAddinServerContract>)clientFactory.CreateClient("perrequest");
+            var output = await client.InvokeAsync(x => x.ToTest());
+            output.Should().BeTrue();
+            var client2 = (NamedPipeAddinClient<IAddinServerContract>)clientFactory.CreateClient("perrequest");
+            var output2 = await client2.InvokeAsync(x => x.ToTest());
+            output2.Should().BeTrue();
+            client.ProcessId.Should().Be(client2.ProcessId);
         }
     }
 }

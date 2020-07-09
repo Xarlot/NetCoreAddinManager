@@ -8,7 +8,14 @@ namespace AddinManager {
 
         public static IServiceCollection AddAddinProcess<TContract>(this IServiceCollection services, string name, Action<IServiceProvider, AddinProcessOptions> configureOptions, ServiceLifetime lifetime) 
             where TContract: class {
-            services.AddAddinProcess(new AddinProcessRegistration<TContract, AddinProcessOptions>(name, (_, options) => new AddinProcess<TContract>(options.Runtime), configureOptions), lifetime);
+            services.AddAddinProcess(new AddinProcessRegistration<TContract, AddinProcessOptions>(name, 
+                (serviceProvider, options) => {
+                    IAddinProcess<TContract> CreateHandler(string processName) => new AddinProcess<TContract>(options.Runtime);
+                    if (options.Lifetime != ServiceLifetime.Singleton) 
+                        return CreateHandler(name);
+                    var addinProcessPool = serviceProvider.GetRequiredService<IAddinProcessPool>();
+                    return (IAddinProcess<TContract>)addinProcessPool.GetOrAdd(name, CreateHandler);
+                }, configureOptions), lifetime);
             return services;
         }
     }

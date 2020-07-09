@@ -15,7 +15,7 @@ namespace AddinManager {
             this.registrations = registrations;
         }
 
-        public IAddinProcess<TContract> Create(string name) {
+        public IAddinProcess<TContract> Create(string name, ServiceLifetime lifetime) {
             var clientRegistration = this.registrations.FirstOrDefault(x => x.Name == name);
             if (clientRegistration == null)
                 throw new ArgumentException("IPC client '" + name + "' is not configured.", nameof(name));
@@ -26,6 +26,6 @@ namespace AddinManager {
 
     public interface IAddinProcessFactory<TContract> 
         where TContract: class {
-        IAddinProcess<TContract> Create(string name);
+        IAddinProcess<TContract> Create(string name, ServiceLifetime lifetime);
     }
 }
