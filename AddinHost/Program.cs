@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 namespace AddinHost {
     class Program {
         public static int Main(string[] args) {
-            Debugger.Launch();
             Parser.Default.ParseArguments<Options>(args).WithParsed(o => {
                 var process = Process.GetProcessById(o.Pid);
                 var thread = new Thread(ListenProcessExit) {IsBackground = true};
@@ -36,7 +35,6 @@ namespace AddinHost {
                        })
                        .ConfigureIpcHost(builder => {
                            builder.AddEndpoints(addinsLocation, searchPattern);
-                           builder.AddNamedPipeEndpoint<IAddinServerContract>(guid);
                        })
                        .ConfigureLogging(builder => {
                            builder.SetMinimumLevel(LogLevel.Debug);

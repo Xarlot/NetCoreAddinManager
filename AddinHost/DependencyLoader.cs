@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace AddinManager.Core {
     public static class DependencyLoader {
         public static void AddDependencies(this IServiceCollection serviceCollection, string path, string pattern) {
-            Debugger.Launch();
             var dirCat = new DirectoryCatalog(path, pattern);
             var importDef = BuildImportDefinition();
             try {
@@ -22,9 +21,8 @@ namespace AddinManager.Core {
                 using var compositionContainer = new CompositionContainer(aggregateCatalog);
                 var exports = compositionContainer.GetExports(importDef);
                 var modules = exports.Select(export => export.Value as IDependencyResolver).Where(m => m != null);
-                var registerComponent = new DependencyRegistrator(serviceCollection);
                 foreach (IDependencyResolver module in modules) 
-                    module.Initialize(registerComponent);
+                    module.Initialize(serviceCollection);
             }
             catch (ReflectionTypeLoadException typeLoadException) {
                 var builder = new StringBuilder();
@@ -34,7 +32,6 @@ namespace AddinManager.Core {
             }
         }
         public static void AddEndpoints(this IIpcHostBuilder builder, string path, string pattern) {
-            Debugger.Launch();
             var dirCat = new DirectoryCatalog(path, pattern);
             var importDef = BuildImportDefinition();
             try {
