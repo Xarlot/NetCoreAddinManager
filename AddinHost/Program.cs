@@ -38,7 +38,6 @@ namespace AddinHost {
             Environment.Exit(0);
         }
         public static IHostBuilder CreateHostBuilder(string[] args, string guid) {
-            Console.WriteLine(guid);
             return Host.CreateDefaultBuilder(args)
                 .ConfigureServices(services => { services.AddSingleton<IAddinServerContract>(x => new AddinServer(services)); })
                 .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<IAddinServerContract>(guid); })

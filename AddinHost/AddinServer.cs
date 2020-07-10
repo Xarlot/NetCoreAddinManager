@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using AddinManager.Core;
+using JKang.IpcServiceFramework.Hosting;
+using JKang.IpcServiceFramework.Hosting.NamedPipe;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AddinHost {
     public class AddinServer : IAddinServerContract {
@@ -16,10 +19,19 @@ namespace AddinHost {
             this.count += 1;
             return this.count;
         }
-        public void RegisterDuplex<T>(string name, string pipeName, string assemblyPath = null) where T: class {
+        public void RegisterDuplex<TClientContract, THostContract>(string name, string clientPipeName, string hostPipeName) 
+            where TClientContract: class 
+            where THostContract: class {
             Debugger.Launch();
-            this.services.AddNamedPipeIpcClient<T>(name, pipeName);
-            this.services.AddPluginClient<T>(name, assemblyPath);
+            var serviceProvider = services.BuildServiceProvider();
+            var options = new NamedPipeIpcEndpointOptions {PipeName = clientPipeName};
+            var endPoint = new NamedPipeIpcEndpoint<TClientContract>(options, serviceProvider.GetRequiredService<ILogger<NamedPipeIpcEndpoint<TClientContract>>>(), serviceProvider);
+            this.services.AddSingleton<IpcEndpoint<TClientContract>>(endPoint);
+            
+            this.services.AddNamedPipeIpcClient<THostContract>(name, hostPipeName);
+        }
+        public void LoadDependencies(string path, string pattern) {
+            this.services.LoadDependencies(path, pattern);
         }
     }
 }
