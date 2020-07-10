@@ -6,6 +6,8 @@ using System.Threading;
 
 namespace AddinManager {
     public class AddinProcess : IAddinProcess {
+        readonly string assemblyLocation;
+        readonly string searchPattern;
         readonly object processLocker = new object();
         const string HostCoreFolder = "AddinHost";
         const string HostCoreExe = "AddinHostCore.exe";
@@ -34,7 +36,9 @@ namespace AddinManager {
             }
         }
 
-        protected internal AddinProcess(Runtime runtime, int parentProcessId) {
+        protected internal AddinProcess(Runtime runtime, int parentProcessId, string assemblyLocation, string searchPattern) {
+            this.assemblyLocation = assemblyLocation;
+            this.searchPattern = searchPattern;
             ParentProcessId = parentProcessId;
             string folder = Path.GetDirectoryName(typeof(AddinProcess).Assembly.Location);
             string exeName = GetProcessName(runtime);
@@ -42,8 +46,9 @@ namespace AddinManager {
             if (!File.Exists(this.pathToAddinProcess))
                 throw new InvalidOperationException(@$"Addin executable not found: {pathToAddinProcess}");
         }
-        public AddinProcess(Runtime runtime) : this(runtime, Process.GetCurrentProcess().Id) {
+        public AddinProcess(Runtime runtime, string assemblyLocation, string searchPattern) : this(runtime, Process.GetCurrentProcess().Id, assemblyLocation, searchPattern) {
         }
+
         string GetProcessName(Runtime runtime) {
             return runtime == Runtime.NetCore3 
                 ? Path.Combine(HostCoreFolder, "netcoreapp3.1", HostCoreExe) : 
@@ -60,7 +65,7 @@ namespace AddinManager {
         Process CreateProcess() {
             Process addinProcess = new Process();
             Guid guid = Guid.NewGuid();
-            string args = string.Format(CultureInfo.InvariantCulture, "/guid:{0} /pid:{1}", guid, ParentProcessId);
+            string args = string.Format(CultureInfo.InvariantCulture, "--guid {0} --pid {1} --location {2} --pattern {3}", guid, ParentProcessId, this.assemblyLocation, this.searchPattern);
 
             addinProcess.StartInfo.CreateNoWindow = true;
             addinProcess.StartInfo.UseShellExecute = false;

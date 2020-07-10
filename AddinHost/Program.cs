@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Threading;
 using AddinManager.Core;
+using CommandLine;
 using JKang.IpcServiceFramework.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,37 +14,38 @@ using Microsoft.Extensions.Logging;
 namespace AddinHost {
     class Program {
         public static int Main(string[] args) {
-            if (args == null || args.Length != 2 || (!args[0].StartsWith("/guid:", StringComparison.Ordinal) || !args[1].StartsWith("/pid:", StringComparison.Ordinal)))
-                return 1;
-            string guid = args[0].Remove(0, 6);
-            if (guid.Length != 36)
-                return 1;
-            int pid = Convert.ToInt32(args[1].Remove(0, 5), CultureInfo.InvariantCulture);
-            try {
-                Process process = Process.GetProcessById(pid);
-                Thread thread = new Thread(ListenProcessExit) {IsBackground = true};
+            Debugger.Launch();
+            Parser.Default.ParseArguments<Options>(args).WithParsed(o => {
+                var process = Process.GetProcessById(o.Pid);
+                var thread = new Thread(ListenProcessExit) {IsBackground = true};
                 thread.Start(process);
-                EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "AddinProcess:" + guid);
+                var eventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "AddinProcess:" + o.Guid);
                 eventWaitHandle.Set();
                 eventWaitHandle.Close();
-            }
-            catch {
-                return 1;
-            }
 
-            CreateHostBuilder(args, guid).Build().Run();
+                CreateHostBuilder(args, o.Guid.ToString(), o.AddinsLocation, o.SearchPattern).Build().Run();
+            }).WithNotParsed(HandleErrors);
             return 0;
+        }
+        static void HandleErrors(IEnumerable<Error> obj) {
+        }
+        static IHostBuilder CreateHostBuilder(string[] args, string guid, string addinsLocation, string searchPattern) {
+            return Host.CreateDefaultBuilder(args)
+                       .ConfigureServices(services => {
+                           services.AddDependencies(addinsLocation, searchPattern);
+                       })
+                       .ConfigureIpcHost(builder => {
+                           builder.AddEndpoints(addinsLocation, searchPattern);
+                           builder.AddNamedPipeEndpoint<IAddinServerContract>(guid);
+                       })
+                       .ConfigureLogging(builder => {
+                           builder.SetMinimumLevel(LogLevel.Debug);
+                       });
         }
         static void ListenProcessExit(object parameter) {
             var process = (Process)parameter;
             process.WaitForExit();
             Environment.Exit(0);
-        }
-        public static IHostBuilder CreateHostBuilder(string[] args, string guid) {
-            return Host.CreateDefaultBuilder(args)
-                .ConfigureServices(services => { services.AddSingleton<IAddinServerContract>(x => new AddinServer(services)); })
-                .ConfigureIpcHost(builder => { builder.AddNamedPipeEndpoint<IAddinServerContract>(guid); })
-                .ConfigureLogging(builder => { builder.SetMinimumLevel(LogLevel.Debug); });
         }
     }
 }

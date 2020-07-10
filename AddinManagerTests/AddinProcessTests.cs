@@ -7,9 +7,9 @@ using NUnit.Framework;
 
 namespace AddinManagerTests {
     public class TestAddinProcess : AddinProcess {
-        protected internal TestAddinProcess(Runtime runtime, int parentProcessId) : base(runtime, parentProcessId) {
+        protected internal TestAddinProcess(Runtime runtime, int parentProcessId, string assemblyLocation, string searchPattern) : base(runtime, parentProcessId, assemblyLocation, searchPattern) {
         }
-        public TestAddinProcess(Runtime runtime) : base(runtime) {
+        public TestAddinProcess(Runtime runtime, string assemblyLocation, string searchPattern) : base(runtime, assemblyLocation, searchPattern) {
         }
         public bool WaitForExit(int timeout) {
             return Process.WaitForExit(timeout);
@@ -31,7 +31,7 @@ namespace AddinManagerTests {
             testProcess.StartInfo.FileName = "TestHost.exe";
             testProcess.Start();
             
-            using var addinProcess = new TestAddinProcess(Runtime.NetCore3, testProcess.Id);
+            using var addinProcess = new TestAddinProcess(Runtime.NetCore3, testProcess.Id, null, null);
             addinProcess.Start();
             
             testProcess.Kill();

@@ -15,15 +15,18 @@ namespace AddinManagerClientCoreTests {
     public class DuplexConnectionTests {
         [Test]
         public async Task RegisterDuplexTest() {
+            var dependencies = (Path.GetDirectoryName(typeof(DuplexConnectionTests).Assembly.Location), "AddinManagerClientCoreTests.dll");
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices(x => {
                     x.AddAddinProcess<IAddinServerContract>("duplexHostProcess", (provider, options) => {
                          options.Runtime = Runtime.Framework;
                          options.Lifetime = ServiceLifetime.Singleton;
+                         options.Dependency = dependencies;
                      })
                      .AddAddinProcess<IDuplexClientContract>("duplexHostProcess", (provider, options) => {
                          options.Runtime = Runtime.Framework;
                          options.Lifetime = ServiceLifetime.Singleton;
+                         options.Dependency = dependencies;
                      })
                      .AddNamedPipeAddinClient<IAddinServerContract>("addinServer", "duplexHostProcess")
                      .AddNamedPipeAddinClient<IDuplexClientContract>("duplexClient", (_, options) => {
@@ -38,11 +41,6 @@ namespace AddinManagerClientCoreTests {
             await host.StartAsync();
             var serviceProvider = host.Services;
             
-            var clientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IAddinServerContract>>();
-            var client = clientFactory.CreateClient("addinServer");
-            await client.InvokeAsync(x => x.LoadDependencies(Path.GetDirectoryName(typeof(DuplexConnectionTests).Assembly.Location), "AddinManagerClientCoreTests.dll"));
-            await client.InvokeAsync(x => x.RegisterDuplex<IDuplexClientContract, IDuplexHostContract>("duplexClient", "duplexClientPipeName", "duplexHostPipeName"));
-
             var duplexClientFactory = serviceProvider.GetRequiredService<IIpcClientFactory<IDuplexClientContract>>();
             var duplexClient = duplexClientFactory.CreateClient("duplexClient");
             var result = await duplexClient.InvokeAsync(x => x.InvokeClient());
