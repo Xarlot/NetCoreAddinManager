@@ -6,5 +6,6 @@ namespace AddinManager {
         public Runtime Runtime { get; set; }
         public string ProcessName { get; set; }
         public ServiceLifetime Lifetime { get; set; }
+        public string PipeName { get; set; }
     }
 }

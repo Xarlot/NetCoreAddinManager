@@ -26,7 +26,10 @@ namespace AddinManagerClientCoreTests {
                          options.Lifetime = ServiceLifetime.Singleton;
                      })
                      .AddNamedPipeAddinClient<IAddinServerContract>("addinServer", "duplexHostProcess")
-                     .AddNamedPipeAddinClient<IDuplexClientContract>("duplexClient", "duplexHostProcess")
+                     .AddNamedPipeAddinClient<IDuplexClientContract>("duplexClient", (_, options) => {
+                         options.ProcessName = "duplexHostProcess";
+                         options.PipeName = "duplexClientPipeName";
+                     })
                      .AddSingleton<IDuplexHostContract, DuplexHost>();
                 })
                 .ConfigureIpcHost(x => x.AddNamedPipeEndpoint<IAddinServerContract>("duplexHostPipeName"))

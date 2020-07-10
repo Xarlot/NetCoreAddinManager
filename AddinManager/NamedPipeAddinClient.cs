@@ -17,7 +17,7 @@ namespace AddinManager {
             this.options = options;
             this.addinProcess = addinProcess;
             this.addinProcess.Start();
-            this.pipeName = this.addinProcess.Guid.ToString();
+            this.pipeName = options.PipeName ?? this.addinProcess.Guid.ToString();
         }
         
         protected override async Task<Stream> ConnectToServerAsync(CancellationToken cancellationToken) {
